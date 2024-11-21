@@ -12,7 +12,7 @@ function ProductVariant({ variantData, updateVariant }) {
     ColorId: "",
     Sizes: [],
     SizeIds: [],
-    Image: [],
+    Image: [], 
     ...variantData,
   });
 
