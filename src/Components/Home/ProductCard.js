@@ -45,7 +45,7 @@ const ProductCard = ({ product, onCardClick }) => {
       {images.length > 0 && (
         <img
           className="card-img-top"
-          src={`data:image/jpeg;base64,${images[currentImageIndex]}`}
+          src={images[currentImageIndex]}
           alt="Product"
         />
       )}
