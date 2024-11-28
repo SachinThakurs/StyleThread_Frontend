@@ -130,7 +130,7 @@ function ProductVariant({ variantData, updateVariant }) {
         <div className="image-preview">
           {localVariant.Image.map((imgSrc, index) => (
             <div key={index} style={{ position: "relative", display: "inline-block", margin: "10px" }}>
-              <img src={`data:image/jpeg;base64,${imgSrc}`} alt={`Preview ${index + 1}`} style={{ maxWidth: "100%", maxHeight: "200px" }} />
+              <img src={imgSrc} alt={`Preview ${index + 1}`} style={{ maxWidth: "100%", maxHeight: "200px" }} />
               <button className="close-button" onClick={() => handleRemoveImage(index)}>
                 &times;
               </button>
