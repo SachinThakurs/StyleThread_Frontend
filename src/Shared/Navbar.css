@@ -14,7 +14,7 @@ body {
 img {
   vertical-align: middle;
   border-style: none;
-  width: 100px;
+  width: 40px;
 }
 .bg-light {
   background-color: #007bff !important;
@@ -185,4 +185,45 @@ img {
 }
 .button{
   padding: 21px 12px;
+}
+/* Style the cart icon container */
+.cart-icon {
+  position: relative;
+  display: inline-block;
+  font-size: 24px; /* Increase the size of the cart icon */
+  color: #000; /* Default color of the cart icon */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect for the cart icon */
+.cart-icon:hover {
+  color: #ff6347; /* Change color on hover (tomato color in this case) */
+}
+
+/* Style the cart count bubble */
+.cart-count {
+  position: absolute;
+  top: -5px; /* Adjust position */
+  right: -5px; /* Adjust position */
+  background-color: #ff6347; /* Background color of the cart count bubble */
+  color: #fff; /* Text color of the cart count */
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem; /* Adjust size of the cart count bubble */
+  font-size: 14px; /* Font size of the cart count */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add a larger icon size if needed */
+.cart-icon .fa-shopping-cart {
+  font-size: 32px; /* Increase the size of the cart icon */
+  transition: transform 0.3s ease; /* Smooth transition for scaling effect */
+}
+
+/* Scale up the cart icon on hover */
+.cart-icon:hover .fa-shopping-cart {
+  transform: scale(1.1); /* Scale the icon on hover */
 }

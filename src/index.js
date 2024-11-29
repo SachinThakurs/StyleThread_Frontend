@@ -4,8 +4,9 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
-import configureStore from "./Components/Store/ConfigureStore";
-import {AuthProvider} from './Components/Login/AuthContext';
+import configureStore from "./Store/ConfigureStore";
+import {AuthProvider} from './Pages/Login/AuthContext';
+import 'react-toastify/dist/ReactToastify.css';
 
 const store = configureStore();
 
