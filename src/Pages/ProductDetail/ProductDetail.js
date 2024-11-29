@@ -1,30 +1,44 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../Loader/Loader";
+import { addToCart } from "../../Store/CartSlice"; // Import the addToCart action
+import Loader from "../../Shared/Loader";
 import "./ProductDetail.css";
+import { useParams } from "react-router-dom";
+import { product } from "../../Store/GenericStore"; // Ensure proper import
 
 const ProductDetail = () => {
   const { id } = useParams(); // Get the product ID from the URL
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const productData = useSelector((state) => state?.products?.list || []); // Get the product data from the Redux store
-  const product = productData?.find((item) => item.productId === parseInt(id)); // Find the product by ID
-  const [selectedImage, setSelectedImage] = useState(
-    product?.productVariants?.[0]?.image[0]
-  );
+  const fetchProduct = productData?.find((item) => item.productId === parseInt(id)); // Find the product by ID
+  const [selectedImage, setSelectedImage] = useState(null); // Initialize with null
   const magnifierRef = useRef(null);
 
+  // Update selected image when product data changes
   useEffect(() => {
-    if (productData.length === 0) {
-      dispatch(product("api/Products")).finally(() => {
-        setLoading(false);
-      });
-    } else {
-      setLoading(false);
-      setSelectedImage(product?.productVariants?.[0]?.image[0]);
+    if (fetchProduct) {
+      const defaultImage = fetchProduct?.productVariants?.[0]?.image?.[0];
+      setSelectedImage(defaultImage || "/path/to/default-image.jpg"); // Set to default image if unavailable
     }
-  }, [dispatch, product, productData.length]);
+  }, [fetchProduct]);
+
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        if (!productData || productData.length === 0) {
+          // Dispatch an action to fetch all products
+          await dispatch(product("api/Products"));
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        setLoading(false); // Ensure loading is turned off even if an error occurs
+      }
+    };
+
+    fetchProductData();
+  }, [dispatch, productData]);
 
   const handleImageClick = (image) => {
     setSelectedImage(image); // Update the selected image when a thumbnail is clicked
@@ -53,6 +67,23 @@ const ProductDetail = () => {
     magnifierRef.current.style.display = "none";
   };
 
+  const handleAddToCart = () => {
+    const variant = fetchProduct?.productVariants?.[0]; // Assume the first variant for simplicity
+    if (variant) {
+      const cartItem = {
+        productId: fetchProduct.productId,
+        name: fetchProduct.name,
+        image: variant.image[0],
+        price: variant.salePrice,
+        colorId: variant.colorId,
+        quantity: 1,
+      };
+
+      // Dispatch the action to add the product to the cart
+      dispatch(addToCart(cartItem));
+    }
+  };
+
   if (loading) {
     return (
       <div className="center-loader">
@@ -61,18 +92,18 @@ const ProductDetail = () => {
     );
   }
 
-  if (!product) {
+  if (!fetchProduct) {
     return <div>Product not found</div>;
   }
 
-  const variant = product?.productVariants?.[0];
+  const variant = fetchProduct?.productVariants?.[0];
 
   return (
     <div className="product-page">
       <div className="product-images">
         <div className="main-image">
           <img
-            src={selectedImage}
+            src={selectedImage || "/path/to/default-image.jpg"}
             alt="Main Product"
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
@@ -81,7 +112,7 @@ const ProductDetail = () => {
           <div className="magnifier" ref={magnifierRef}></div>
         </div>
         <div className="thumbnail-images">
-          {variant?.image.map((image, index) => (
+          {variant?.image?.map((image, index) => (
             <img
               key={index}
               src={image}
@@ -92,7 +123,7 @@ const ProductDetail = () => {
         </div>
       </div>
       <div className="product-info">
-        <h4>{product.description?.slice(0, 50) + "..."}</h4>
+        <h4>{fetchProduct.description?.slice(0, 50) + "..."}</h4>
         <div className="price-section">
           <span className="price">₹{variant?.salePrice}</span>
           <span className="original-price">₹{variant?.price}</span>
@@ -106,7 +137,7 @@ const ProductDetail = () => {
         <div className="color-options">
           <span>Color</span>
           <div className="color-thumbnails">
-            {product.productVariants?.map((variant, index) => (
+            {fetchProduct.productVariants?.map((variant, index) => (
               <img
                 key={index}
                 src={variant.image[0]} // Assuming image[0] is the first image
@@ -120,44 +151,16 @@ const ProductDetail = () => {
           <div className="sizes">
             {variant?.productVariantSizes?.map((sizeObj, index) => (
               <button key={index} className="size">
-                {/* Replace sizeId with actual size names if needed */}
                 {sizeObj.sizeId}
               </button>
             ))}
           </div>
         </div>
-        <div className="offers">
-          <h2>Available offers</h2>
-          <ul>
-            <li>
-              Bank Offer Get ₹50 Instant Discount on first Flipkart UPI
-              transaction on order of ₹200 and above T&C
-            </li>
-            <li>
-              Bank Offer Flat ₹1000 off on HDFC Bank Credit Card EMI Txns,
-              Tenure: 6 and 9 months, Min Txn Value: ₹15,000 T&C
-            </li>
-            <li>
-              Bank Offer Flat ₹1250 off on HDFC Bank Credit Card EMI Txns,
-              Tenure: 12 and 18 months, Min Txn Value: ₹15,000 T&C
-            </li>
-            <li>
-              Partner Offer Make a purchase and enjoy a surprise cashback/
-              coupon that you can redeem later! Know More
-            </li>
-            <li>+18 more offers</li>
-          </ul>
-        </div>
         <div className="purchase-section">
-          <button className="add-to-cart">ADD TO CART</button>
+          <button className="add-to-cart" onClick={handleAddToCart}>
+            ADD TO CART
+          </button>
           <button className="buy-now">BUY NOW</button>
-        </div>
-        <div className="delivery-section">
-          <span>
-            Delivery by <strong>4 Aug, Sunday</strong> | Free{" "}
-            <strong>₹40</strong> if ordered before 8:34 PM
-          </span>
-          {/* <span>Cash on Delivery available</span> */}
         </div>
       </div>
     </div>

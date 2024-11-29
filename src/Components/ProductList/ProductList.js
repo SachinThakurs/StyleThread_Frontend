@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTable, useFilters } from "react-table";
 import "./ProductList.css";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import Loader from "../Loader/Loader";
-import { product } from "../Store/GenericStore";
+import Loader from "../../Shared/Loader";
+import { product } from "../../Store/GenericStore";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function ProductList() {
@@ -74,9 +74,14 @@ function ProductList() {
     );
 
   const handleEdit = (product) => {
-    // Navigate to the Add Product page and pass the product data
-    console.log(product);
-    navigate('/addProduct', { state: { product } });
+    // Ensure that `productVariants` is included in the product object
+    const productData = {
+      ...product,
+      productVariants: product.productVariants || [], // Add productVariants if not already present
+    };
+
+    // Navigate to Add Product page with the product data
+    navigate(`/editProduct/${productData.productId}`, { state: { product: productData } });
   };
 
   const handleDelete = (productId) => {
@@ -92,7 +97,7 @@ function ProductList() {
         <div className="col-1 mt-2">
           <button
             className="btn btn-primary"
-            onClick={() => navigate('/addProduct')} // Navigate to Add Product page
+            onClick={() => navigate("/addProduct")} // Navigate to Add Product page
           >
             <FaPlus />
             &nbsp;&nbsp;Add Product
@@ -110,9 +115,7 @@ function ProductList() {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </th>
+                  <th {...column.getHeaderProps()}>{column.render("Header")}</th>
                 ))}
               </tr>
             ))}

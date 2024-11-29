@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ProductCard from "./ProductCard";
-import Loader from "../Loader/Loader";
+import Loader from "../../Shared/Loader";
 import "./Home.css";
-import ProductDetail from "./ProductDetail";
 import { useNavigate } from "react-router-dom";
-import { product } from "../Store/GenericStore";
+import { product } from "../../Store/GenericStore";
+import ProductCard from "../../Components/ProductCard/ProductCard";
 
 const Home = () => {
   const navigate = useNavigate();

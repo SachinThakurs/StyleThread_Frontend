@@ -1,6 +1,6 @@
 import React from 'react';
 import NoContentFound from './NoContentFound';
-import { useAuth } from './Login/AuthContext';
+import { useAuth } from './Pages/Login/AuthContext';
 
 // ProtectedRoute component
 const ProtectedRoute = ({ element: Element, allowedRoles }) => {
