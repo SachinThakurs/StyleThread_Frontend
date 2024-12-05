@@ -206,7 +206,7 @@ img {
   position: absolute;
   top: -5px; /* Adjust position */
   right: -5px; /* Adjust position */
-  background-color: #ff6347; /* Background color of the cart count bubble */
+  background-color: #43bf2d; /* Background color of the cart count bubble */
   color: #fff; /* Text color of the cart count */
   border-radius: 50%;
   padding: 0.2rem 0.5rem; /* Adjust size of the cart count bubble */
