@@ -12,6 +12,7 @@ import AddProduct from "./Pages/AddProduct/AddProduct";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import Cart from "./Pages/Cart/Cart";
+import FilterBar from "./Components/FiilterBar/FilterBar";
 
 function App() {
   return (
@@ -20,8 +21,8 @@ function App() {
         <Navbar />
         <ToastContainer />
         <Routes>
-          <Route path="/" element={ <div className="product-form"> <Home /> </div> } />
-          <Route path="home" element={ <div className="product-form"> <Home /> </div> } />
+          <Route path="/" element={ <Home />} />
+          <Route path="home" element={<Home />} />
           <Route path="auth" element={<AuthForm />} />
           <Route path="productList" element={ <ProtectedRoute element={ProductList} allowedRoles={["Administrator"]} /> } />
           {" "}

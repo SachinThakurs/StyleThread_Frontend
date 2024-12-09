@@ -164,7 +164,7 @@ const ProductDetail = () => {
                   }`}
                   onClick={() => handleSizeSelect(sizeObj)}
                 >
-                  {sizeObj.sizeId}
+                  {sizeObj.sizeName}
                 </button>
               )
             )}
