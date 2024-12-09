@@ -138,6 +138,7 @@ function AddProduct() {
         productVariantSizes: variant.SizeIds.map((sizeId) => ({
           productVariantId: variant.ProductVariantId,
           sizeId,
+          sizeName : product.ProductVariants[0].Sizes.find(size => size.value === sizeId)?.label
         })),
       })
     );
@@ -159,6 +160,8 @@ function AddProduct() {
       fabricCareId: parseInt(product.FabricCareId, 10),
       productVariants: transformedProductVariants,
     };
+    console.log(finalProductData);
+    
 
     try {
       const url = initialProduct
