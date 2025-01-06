@@ -59,23 +59,6 @@ const Home = () => {
   };
 
   return (
-    // <div>
-    //   {loading ? (
-    //     <div className="center-loader">
-    //       <Loader />
-    //     </div>
-    //   ) : showDetailModal === false ? (
-    //     <div className="rowDesign">
-    //       {productData.map((product, index) => (
-    //         <ProductCard
-    //           key={index}
-    //           product={product}
-    //           onCardClick={handleCardClick}
-    //         />
-    //       ))}
-    //     </div>
-    //   ) : null}
-    // </div>
     <div>
       <div className="product-form">
       <FilterBar onCategorySelect={handleCategorySelect} />

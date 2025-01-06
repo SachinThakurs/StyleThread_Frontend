@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, updateCartItemQuantity } from "../../Store/CartSlice";
+import axios from "axios"; // Import axios for API requests
 import "./Cart.css";
-import { FaTractor, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 
 const Cart = () => {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.cartItems); // Get cart items from Redux store
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const [productDetails, setProductDetails] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const shippingCost = 50;
@@ -16,7 +17,6 @@ const Cart = () => {
     calculateSubtotal(cartItems);
   }, [cartItems]);
 
-  // Save cart items to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -34,6 +34,55 @@ const Cart = () => {
 
   const handleRemove = (productId) => {
     dispatch(removeFromCart(productId));
+  };
+
+  const handleCheckout = async () => {
+    try {
+      // Retrieve client data from localStorage
+      const clientData = JSON.parse(localStorage.getItem("auth"));
+
+      if (!clientData) {
+        alert("Client information is missing. Please log in.");
+        return;
+      }
+
+      // Prepare the request payload
+      const payload = {
+        entity: {
+          amount: subtotal + shippingCost,
+          customerName: `${clientData.firstName} ${clientData.lastName}`,
+          customerEmail: clientData.email,
+          customerContact: clientData.phoneNumber,
+        },
+      };
+
+      // API call
+      const response = await axios.post(
+        "https://localhost:44314/api/Payment/create-order",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Handle successful response
+      if (response.status === 200) {
+        console.log("Order Response:", response.data);
+        // Extract and separate the content values
+        const [paymentId, paymentLink] = response.data.content.split(", ");
+
+        // Open the payment link in a new tab
+        window.open(paymentLink, "_blank");
+
+      } else {
+        alert("Failed to create order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      alert("An error occurred during checkout. Please try again.");
+    }
   };
 
   return (
@@ -79,7 +128,7 @@ const Cart = () => {
                       className="remove-btn"
                       onClick={() => handleRemove(item.productId)}
                     >
-                      <FaTrash/>
+                      <FaTrash />
                     </button>
                   </div>
                 </div>
@@ -90,18 +139,6 @@ const Cart = () => {
         <div className="cart-summary-section">
           <div className="summary-card">
             <h3>Summary</h3>
-            {/* <div className="card-payment-methods">
-              <span>💳</span>
-              <span>Visa</span>
-              <span>PayPal</span>
-            </div>
-            <input type="text" placeholder="Cardholder's Name" />
-            <input type="text" placeholder="Card Number" />
-            <div className="card-details">
-              <input type="text" placeholder="Expiration" />
-              <input type="text" placeholder="CVV" />
-            </div> */}
-           
             <div className="summary-totals">
               <p>
                 Subtotal: <span>₹{subtotal.toFixed(2)}</span>
@@ -117,12 +154,12 @@ const Cart = () => {
               </p>
               <div>
                 <span>--------------------------------------------------------------------------</span>
-            </div>
+              </div>
               <p>
                 Total: <span>₹{(subtotal + shippingCost).toFixed(2)}</span>
               </p>
             </div>
-            <button className="checkout-btn">
+            <button className="checkout-btn" onClick={handleCheckout}>
               ₹{(subtotal + shippingCost).toFixed(2)} CHECKOUT →
             </button>
           </div>

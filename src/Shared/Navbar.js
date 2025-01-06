@@ -57,6 +57,7 @@ function Navbar() {
           </div>
         </div>
         <div className="navbar-right">
+        {role === "Administrator" && (
           <div className="cart-icon">
             <Link to="/cart">
               <img src={shoppingCart} alt="shoppingCart"/>
@@ -65,6 +66,7 @@ function Navbar() {
               )}
             </Link>
           </div>
+          )}
           <div className="auth-buttons">
             {token ? (
               <button className="nav-link" onClick={handleLogout}>
@@ -73,10 +75,7 @@ function Navbar() {
             ) : (
               <>
                 <Link to="/auth" className="nav-link">
-                  Login
-                </Link>
-                <Link to="/auth" className="nav-link">
-                  Register
+                  Sign In
                 </Link>
               </>
             )}
