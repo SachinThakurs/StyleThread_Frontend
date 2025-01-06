@@ -5,19 +5,21 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import configureStore from "./Store/ConfigureStore";
-import {AuthProvider} from './Pages/Login/AuthContext';
-import 'react-toastify/dist/ReactToastify.css';
+import { AuthProvider } from "./Pages/Login/AuthContext";
+import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter } from "react-router-dom";
 
 const store = configureStore();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  
-    <Provider store={store}>
+  <Provider store={store}>
+    <BrowserRouter>
       <AuthProvider>
-      <App />
+        <App />
       </AuthProvider>
-    </Provider>
+    </BrowserRouter>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,7 +1,7 @@
 import "./App.css";
 import About from "./Pages/About/About";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AuthForm from "./Pages/Login/Auth";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Auth from "./Pages/Login/Auth";
 import ProtectedRoute from "./ProtectedRoute";
 import NoContentFound from "./NoContentFound";
 import ProductList from "./Components/ProductList/ProductList";
@@ -12,18 +12,21 @@ import AddProduct from "./Pages/AddProduct/AddProduct";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import Cart from "./Pages/Cart/Cart";
-import FilterBar from "./Components/FiilterBar/FilterBar";
+import AuthRedirect from "./Pages/Login/AuthRedirect ";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
         <Navbar />
         <ToastContainer />
         <Routes>
+        {/* Public Routes */}
+          {/* <Route path="auth" element={<AuthRedirect />} /> */}
+
+        {/* Private Routes */}
           <Route path="/" element={ <Home />} />
           <Route path="home" element={<Home />} />
-          <Route path="auth" element={<AuthForm />} />
+          <Route path="auth" element={<Auth />} />
           <Route path="productList" element={ <ProtectedRoute element={ProductList} allowedRoles={["Administrator"]} /> } />
           {" "}
           <Route path="addProduct" element={ <ProtectedRoute element={AddProduct} allowedRoles={["Administrator"]} /> } />
@@ -40,9 +43,11 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="NoContentFound" element={<NoContentFound />} />{" "}
           <Route path="*" element={<NoContentFound />} />
-          <Route path="/cart" element={<div className="product-form"><ProtectedRoute element={Cart} allowedRoles={["Administrator"]} /></div>}/>
+          <Route path="/cart" element={<div className="product-form"><ProtectedRoute element={Cart} allowedRoles={["Administrator"]} /></div>}/>.
+
+          {/* Redirect to /auth if no matching route */}
+        {/* <Route path="*" element={<Navigate to="/auth" replace />} /> */}
         </Routes>
-      </BrowserRouter>
     </div>
   );
 }
