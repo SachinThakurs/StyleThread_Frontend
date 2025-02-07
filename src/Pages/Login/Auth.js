@@ -75,7 +75,7 @@ const Auth = () => {
       if (response.data.success === false) {
         showToast("Error:", response.data.message);
       } else if (response.data.success === true) {
-        const token = response.data.message;
+        const token = response.data.content;
         if (token != null) {
           localStorage.setItem("token", token);
           localStorage.setItem("auth", JSON.stringify(response.data.content));

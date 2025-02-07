@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { product } from "../../Store/GenericStore";
 import Loader from "../../Shared/Loader";
 import "./ProductDetail.css";
+import ProductCard from "../../Components/ProductCard/ProductCard";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -12,9 +13,8 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const productData = useSelector((state) => state?.products?.list || []);
-  const fetchProduct = productData?.find(
-    (item) => item.productId === parseInt(id)
-  );
+  
+  const fetchProduct = productData?.find((item) => item.productId === parseInt(id));
   const [selectedColorVariant, setSelectedColorVariant] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -31,12 +31,12 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        if (!productData || productData.length === 0) {
+        if (!productData.length) {
           await dispatch(product("api/Products"));
         }
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching product:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -46,165 +46,118 @@ const ProductDetail = () => {
 
   const handleColorSelect = (variant) => {
     setSelectedColorVariant(variant);
-    setSelectedImage(variant?.image?.[0]); // Set first image of selected variant
-    setSelectedSize(null); // Reset size when color changes
-  };
-
-  const handleImageClick = (image) => {
-    setSelectedImage(image);
+    setSelectedImage(variant?.image?.[0]);
+    setSelectedSize(null);
   };
 
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
-    setSizeSelectionError(false); // Reset error when size is selected
+    setSizeSelectionError(false);
   };
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      setSizeSelectionError(true); // Show error if no size is selected
+      setSizeSelectionError(true);
       return;
     }
-
-    if (selectedColorVariant) {
-      const cartItem = {
-        productId: fetchProduct.productId,
-        name: fetchProduct.name,
-        image: selectedColorVariant.image[0],
-        price: selectedColorVariant.salePrice,
-        colorId: selectedColorVariant.colorId,
-        sizeId: selectedSize.sizeId,
-        quantity: 1,
-      };
-      dispatch(addToCart(cartItem));
-    }
+    dispatch(addToCart({
+      productId: fetchProduct.productId,
+      name: fetchProduct.name,
+      image: selectedColorVariant.image[0],
+      price: selectedColorVariant.salePrice,
+      colorId: selectedColorVariant.colorId,
+      sizeId: selectedSize.sizeId,
+      quantity: 1,
+    }));
   };
 
   const handleBuyNow = () => {
     handleAddToCart();
-    if (selectedSize) {
-      navigate("/cart");
-    }
+    if (selectedSize) navigate("/cart");
   };
 
-  if (loading) {
-    return (
-      <div className="center-loader">
-        <Loader />
-      </div>
-    );
-  }
+  const handleCardClick = (product) => {
+    navigate(`/product/${product.productId}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  if (!fetchProduct) {
-    return <div>Product not found</div>;
-  }
+  if (loading) return <Loader className="center-loader" />;
+  if (!fetchProduct) return <div>Product not found</div>;
+
+  const relatedProducts = productData.filter((item) => item.productId !== fetchProduct.productId);
 
   return (
-    <div className="product-detail-page">
-      <div className="left-column">
-        <div className="main-image">
-          <img
-            src={selectedImage || "/path/to/default-image.jpg"}
-            alt="Main Product"
-          />
+    <>
+      <div className="product-detail-page">
+        <div className="left-column">
+          <div className="main-image">
+            <img src={selectedImage || "/default-image.jpg"} alt="Product" />
+          </div>
+          <div className="thumbnail-images">
+            {selectedColorVariant?.image?.map((img, index) => (
+              <img key={index} src={img} alt={`Thumbnail ${index + 1}`} className="thumbnail" onClick={() => setSelectedImage(img)} />
+            ))}
+          </div>
         </div>
-        <div className="thumbnail-images">
-          {selectedColorVariant?.image?.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Thumbnail ${index + 1}`}
-              onClick={() => handleImageClick(image)}
-              className="thumbnail"
-            />
+
+        <div className="right-column">
+          <h1>{fetchProduct.name}</h1>
+          <div className="price">
+            ₹{selectedColorVariant?.salePrice} <span className="original-price">₹{selectedColorVariant?.price}</span>
+          </div>
+
+          <div className="color-options">
+            <span>Colors</span>
+            <div className="color-swatches">
+              {fetchProduct.productVariants?.map((variant, index) => (
+                <img key={index} src={variant.image?.[0] || "/default-image.jpg"} alt="Color" className="color-swatch" onClick={() => handleColorSelect(variant)} />
+              ))}
+            </div>
+          </div>
+
+          <div className="size-options">
+            <span>Sizes</span>
+            <div className="sizes">
+              {selectedColorVariant?.productVariantSizes?.map((sizeObj, index) => (
+                <button key={index} className={`size ${selectedSize?.sizeId === sizeObj.sizeId ? "selected" : ""}`} onClick={() => handleSizeSelect(sizeObj)}>
+                  {sizeObj.size.sizeName}
+                </button>
+              ))}
+            </div>
+            {sizeSelectionError && <p className="error-message">Please select a size.</p>}
+          </div>
+
+          <div className="actions">
+            <button className="add-to-cart" onClick={handleAddToCart}>Add to Cart</button>
+            <button className="buy-now" onClick={handleBuyNow}>Buy Now</button>
+          </div>
+
+          <div className="accordion">
+            <details>
+              <summary>Details</summary>
+              <p>{fetchProduct.description}</p>
+            </details>
+            <details>
+              <summary>Shipping & Returns</summary>
+              <p>Free returns within 30 days.</p>
+            </details>
+            <details>
+              <summary>Specifications</summary>
+              <ul>{fetchProduct.specifications?.map((spec, index) => (<li key={index}>{spec}</li>))}</ul>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div className="related-products">
+        <h2>Related Products</h2>
+        <div className="rowDesign">
+          {relatedProducts.map((product, index) => (
+            <ProductCard key={index} product={product} onCardClick={handleCardClick} />
           ))}
         </div>
       </div>
-
-      <div className="right-column">
-        <h1>{fetchProduct.name}</h1>
-        <div className="price">
-          ₹{selectedColorVariant?.salePrice}{" "}
-          <span className="original-price">₹{selectedColorVariant?.price}</span>
-        </div>
-
-        {/* Color Options */}
-        <div className="color-options">
-          <span>Colors</span>
-          <div className="color-swatches">
-            {fetchProduct.productVariants?.map((variant, index) => {
-              // Assuming each variant has an associated image URL in variant.image[0]
-              const variantImage = variant?.image?.[0]; // Default to the first image in the variant
-              return (
-                <div
-                  key={index}
-                  className="color-swatch"
-                  onClick={() => handleColorSelect(variant)}
-                >
-                  <img
-                    src={variantImage || "/path/to/default-image.jpg"} // Fallback image if variant image is not available
-                    alt={`Variant ${index + 1}`}
-                    className="color-swatch-image"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Size Options */}
-        <div className="size-options">
-          <span>Sizes</span>
-          <div className="sizes">
-            {selectedColorVariant?.productVariantSizes?.map(
-              (sizeObj, index) => (
-                <button
-                  key={index}
-                  className={`size ${
-                    selectedSize?.sizeId === sizeObj.sizeId ? "selected" : ""
-                  }`}
-                  onClick={() => handleSizeSelect(sizeObj)}
-                >
-                  {sizeObj.sizeName}
-                </button>
-              )
-            )}
-          </div>
-          {sizeSelectionError && (
-            <p className="error-message">Please select a size.</p>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="actions">
-          <button className="add-to-cart" onClick={handleAddToCart}>
-            Add to Cart
-          </button>
-          <button className="buy-now" onClick={handleBuyNow}>
-            Buy Now
-          </button>
-        </div>
-
-        {/* Accordion */}
-        <div className="accordion">
-          <details>
-            <summary>Details</summary>
-            <p>{fetchProduct.description}</p>
-          </details>
-          <details>
-            <summary>Shipping & Returns</summary>
-            <p>Free returns within 30 days.</p>
-          </details>
-          <details>
-            <summary>Specifications</summary>
-            <ul>
-              {fetchProduct.specifications?.map((spec, index) => (
-                <li key={index}>{spec}</li>
-              ))}
-            </ul>
-          </details>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

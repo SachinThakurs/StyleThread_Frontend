@@ -14,6 +14,11 @@ export function AuthProvider({ children }) {
 
   // Decode the token to extract expiration and role
   const decodeToken = (token) => {
+    if (!token) {
+      console.error("Token is empty or null");
+      return null;
+    }
+  
     try {
       const payload = JSON.parse(atob(token.split(".")[1])); // Decode the JWT payload
       return payload;
