@@ -60,7 +60,7 @@ h1 {
 
 .price {
   font-size: 28px;
-  color: #ff5722;
+  color: #02934a;
   margin-top: 10px;
 }
 
@@ -199,4 +199,68 @@ h1 {
   color: red;
   font-size: 14px;
   margin-top: 5px;
+}
+
+
+
+
+.related-products {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.related-products h2 {
+  margin-bottom: 15px;
+}
+
+.product-list {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: row; /* Change to row to align items horizontally */
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  gap: 20px; /* Increased space between fields */
+  padding: 20px; /* Added padding to the form container */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 1rem;
+  margin-top: 30px;
+}
+
+.product-card {
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.product-card h3 {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.product-card p {
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+
+.rowDesign {
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: calc(-1* var(--bs-gutter-y));
+  margin-right: calc(-.5* var(--bs-gutter-x));
+  margin-left: calc(-.5* var(--bs-gutter-x));
 }
