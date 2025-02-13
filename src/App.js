@@ -13,6 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import Cart from "./Pages/Cart/Cart";
 import AuthRedirect from "./Pages/Login/AuthRedirect ";
+import Profile from "./Pages/Profile/Profile";
+import Footer from "./Shared/Footer";
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function App() {
               /> 
             } 
           />
+          <Route path="profile" element={ <ProtectedRoute element={Profile} allowedRoles={["Visitor"]} /> } />
           <Route path="/product/:id" element={ <div className="product-form"> <ProductDetail /> </div> } />
           <Route path="about" element={<About />} />
           <Route path="NoContentFound" element={<NoContentFound />} />{" "}
@@ -48,6 +51,7 @@ function App() {
           {/* Redirect to /auth if no matching route */}
         {/* <Route path="*" element={<Navigate to="/auth" replace />} /> */}
         </Routes>
+        <Footer/>
     </div>
   );
 }

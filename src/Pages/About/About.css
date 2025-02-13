@@ -32,13 +32,14 @@
   
   .about-image img {
     width: 100%;
-    max-width: 300px; /* Adjust as needed */
+    max-width: 500px; /* Adjust as needed */
     border-radius: 10px;
   }
   
   .about-content {
     flex: 1;
     padding: 20px;
+    margin-left: 3rem;
   }
   
   .about-content h2 {

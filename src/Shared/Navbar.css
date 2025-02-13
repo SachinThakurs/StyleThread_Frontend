@@ -17,7 +17,7 @@ img {
   width: 40px;
 }
 .bg-light {
-  background-color: #007bff !important;
+  background-color: #070809 !important;
 }
 .nav-center {
   flex: auto;
@@ -67,7 +67,7 @@ img {
   font-weight: 400;
   font-style: italic;
   color: #ffffff;
-  margin-left: 3rem;
+  margin-left: 1rem;
 }
 .searchbox{
   position: relative;
@@ -112,7 +112,7 @@ img {
 .auth-buttons {
   display: flex;
   align-items: center;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .auth-buttons a {
@@ -186,36 +186,66 @@ img {
 .button{
   padding: 21px 12px;
 }
-/* Style the cart icon container */
-.cart-icon {
-  position: relative;
-  display: inline-block;
-  font-size: 24px; /* Increase the size of the cart icon */
-  color: #000; /* Default color of the cart icon */
-  cursor: pointer;
-  transition: color 0.3s ease;
+
+.cart-icon:hover img,
+.profile-icon:hover img {
+  transform: scale(1.1);
+  filter: brightness(0.8); /* Makes it slightly darker */
 }
 
-/* Hover effect for the cart icon */
-.cart-icon:hover {
-  color: #ff6347; /* Change color on hover (tomato color in this case) */
+.cart-icon,
+.profile-icon {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.ST-Logo{
+  margin-left: 3rem;
+}
+
+/* Add spacing between cart and profile */
+.cart-icon,
+.profile-icon {
+  margin-right: 20px;
+}
+
+/* Apply hover effect on the image */
+.ST-Logo img,
+.cart-icon img,
+.profile-icon img {
+  width: 32px; /* Adjust icon size */
+  height: 32px;
+  transition: transform 0.3s ease, filter 0.3s ease; /* Smooth scale and dark effect */
+}
+
+/* Scale the icon on hover */
+.ST-Logo:hover img,
+.cart-icon:hover img,
+.profile-icon:hover img {
+  transform: scale(1.1);
+  filter: brightness(0.8); /* Makes it slightly darker */
 }
 
 /* Style the cart count bubble */
 .cart-count {
   position: absolute;
-  top: -5px; /* Adjust position */
-  right: -5px; /* Adjust position */
-  background-color: #43bf2d; /* Background color of the cart count bubble */
-  color: #fff; /* Text color of the cart count */
+  top: -5px;
+  right: -5px;
+  background-color: #43bf2d;
+  color: #fff;
   border-radius: 50%;
-  padding: 0.2rem 0.5rem; /* Adjust size of the cart count bubble */
-  font-size: 14px; /* Font size of the cart count */
+  padding: 0.2rem 0.5rem;
+  font-size: 14px;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 20px;
+  min-height: 20px;
 }
+
 
 /* Add a larger icon size if needed */
 .cart-icon .fa-shopping-cart {
@@ -227,3 +257,5 @@ img {
 .cart-icon:hover .fa-shopping-cart {
   transform: scale(1.1); /* Scale the icon on hover */
 }
+
+
