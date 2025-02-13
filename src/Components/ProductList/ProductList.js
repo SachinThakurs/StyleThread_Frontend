@@ -6,6 +6,7 @@ import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import Loader from "../../Shared/Loader";
 import { product } from "../../Store/GenericStore";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Button } from "../Atoms/Button";
 
 function ProductList() {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ function ProductList() {
     () => [
       {
         Header: "SKU",
-        accessor: "sku",
+        accessor: "sku"
       },
       {
         Header: "Name",
@@ -37,11 +38,11 @@ function ProductList() {
             }}
             placeholder="Search by name"
           />
-        ),
+        )
       },
       {
         Header: "Description",
-        accessor: "description",
+        accessor: "description"
       },
       {
         Header: "Action",
@@ -61,8 +62,8 @@ function ProductList() {
               <FaTrash />
             </button>
           </div>
-        ),
-      },
+        )
+      }
     ],
     [filterInput]
   );
@@ -77,11 +78,13 @@ function ProductList() {
     // Ensure that `productVariants` is included in the product object
     const productData = {
       ...product,
-      productVariants: product.productVariants || [], // Add productVariants if not already present
+      productVariants: product.productVariants || [] // Add productVariants if not already present
     };
 
     // Navigate to Add Product page with the product data
-    navigate(`/editProduct/${productData.productId}`, { state: { product: productData } });
+    navigate(`/editProduct/${productData.productId}`, {
+      state: { product: productData }
+    });
   };
 
   const handleDelete = (productId) => {
@@ -95,13 +98,15 @@ function ProductList() {
           <h2>Product List</h2>
         </div>
         <div className="col-1 mt-2">
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/addProduct")} // Navigate to Add Product page
-          >
-            <FaPlus />
-            &nbsp;&nbsp;Add Product
-          </button>
+          <Button
+            label={
+              <>
+                <FaPlus className="icon" /> Add Product
+              </>
+            }
+            onClick={() => navigate("/addProduct")}
+            className="primary" // You can add extra classes to customize
+          />
         </div>
       </div>
 
@@ -115,7 +120,9 @@ function ProductList() {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                  <th {...column.getHeaderProps()}>
+                    {column.render("Header")}
+                  </th>
                 ))}
               </tr>
             ))}

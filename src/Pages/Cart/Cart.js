@@ -4,7 +4,7 @@ import { removeFromCart, updateCartItemQuantity } from "../../Store/CartSlice";
 import axios from "axios"; // Import axios for API requests
 import "./Cart.css";
 import { FaTrash } from "react-icons/fa";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -39,96 +39,33 @@ const Cart = () => {
   const handleRemove = (productId) => {
     dispatch(removeFromCart(productId));
   };
-
-  // const handleCheckout = async () => {
-  //   try {
-  //     var clientData =null;
-  //     // Retrieve client data from localStorage
-  //     const clientDatas = localStorage.getItem("token");
-
-  //     if (!clientDatas) {
-  //       alert("Client information is missing. Please log in.");
-  //       return;
-  //     }
-
-  //     try {
-  //       clientData = jwtDecode(clientDatas);
-  //     } catch (error) {
-  //       console.error("Invalid token", error);
-  //       alert("Session expired. Please log in again.");
-  //       localStorage.removeItem("auth"); // Clear invalid token
-  //     }
-
-  //     // Prepare the request payload according to the new API requirements
-  //     const payload = {
-  //       amount: subtotal + shippingCost, // The total amount to be paid
-  //       referenceId: `order-${Date.now()}`, // Unique reference ID for the order (using timestamp here)
-  //       description: "Payment for Order", // Order description
-  //       customer: {
-  //         name: `${clientData.firstName} ${clientData.lastName}`, // Customer's full name
-  //         contact: clientData.phoneNumber, // Customer's phone number
-  //         email: clientData.email // Customer's email
-  //       },
-  //       reminderEnable: true, // Enable reminder (set as per your requirement)
-  //       callbackUrl: "http://localhost:3000/home", // Replace with your actual callback URL
-  //       callbackMethod: "POST" // HTTP method for the callback
-  //     };
-      
-  //     // API call to GetPaymentLink endpoint
-  //     const response = await axios.post(
-  //       "https://localhost:44314/api/Payment/GetPaymentLink",
-  //       payload,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json"
-  //         }
-  //       }
-  //     );
-
-  //     // Handle successful response
-  //     if (response.status === 200) {
-  //       console.log("Order Response:", response.data);
-  //       // Extract and separate the content values
-  //       const [paymentId, paymentLink] = response.data.content.split(", ");
-
-  //       // Open the payment link in a new tab
-  //       window.open(paymentLink, "_blank");
-  //     } else {
-  //       alert("Failed to create order. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during checkout:", error);
-  //     alert("An error occurred during checkout. Please try again.");
-  //   }
-  // };
-
   const handleCheckout = async () => {
     try {
       // Retrieve client data from localStorage
       const token = localStorage.getItem("auth");
-  
+
       if (!token) {
         alert("Client information is missing. Please log in.");
         return;
       }
-  
+
       let clientData;
       try {
-        clientData = jwtDecode(token);  
+        clientData = jwtDecode(token);
       } catch (error) {
         console.error("Invalid token", error);
         alert("Session expired. Please log in again.");
         localStorage.removeItem("token"); // Clear invalid token
         return;
       }
-  
+
       // Validate required values
       if (typeof subtotal !== "number" || typeof shippingCost !== "number") {
         console.error("Subtotal or shippingCost is not defined properly.");
         alert("Invalid cart details. Please refresh and try again.");
         return;
       }
-  
+
       // Prepare the request payload according to the new API requirements
       const payload = {
         amount: subtotal + shippingCost, // Ensure this is a valid number
@@ -136,33 +73,33 @@ const Cart = () => {
         description: "Payment for Order", // Order description
         customer: {
           name: `${clientData.iss} ${clientData.lastName}`, // Customer's full name
-          contact:  "", // Ensure phoneNumber exists
+          contact: "", // Ensure phoneNumber exists
           email: clientData.sub
         },
         reminderEnable: true, // Enable reminder (set as per your requirement)
         callbackUrl: "http://localhost:3000/home", // Replace with your actual callback URL
         callbackMethod: "get" // HTTP method for the callback
       };
-  
+
       console.log("Sending checkout request with payload:", payload);
-  
+
       // API call to GetPaymentLink endpoint
       const response = await axios.post(
         "https://localhost:44314/api/Payment/GetPaymentLink",
         payload,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
             // "Authorization": `Bearer ${token}` // Uncomment if the API requires authentication
           }
         }
       );
-  
+
       // Handle successful response
       if (response.status === 200 && response.data.content) {
         console.log("Order Response:", response.data);
         const paymentLink = response.data.content.shortUrl;
-  
+
         if (paymentLink) {
           window.open(paymentLink, "_blank");
         } else {
@@ -173,8 +110,15 @@ const Cart = () => {
         alert("Failed to create order. Please try again.");
       }
     } catch (error) {
-      console.error("Error during checkout:", error.response?.data || error.message);
-      alert(`Checkout error: ${error.response?.data?.message || "Please try again."}`);
+      console.error(
+        "Error during checkout:",
+        error.response?.data || error.message
+      );
+      alert(
+        `Checkout error: ${
+          error.response?.data?.message || "Please try again."
+        }`
+      );
     }
   };
 

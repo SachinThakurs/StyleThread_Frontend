@@ -1,0 +1,46 @@
+/* Button.module.css */
+.btn {
+    background-color: #333;  /* Dark background for black theme */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn:hover {
+    background-color: #444;  /* Darker hover state */
+    transform: translateY(-2px);
+  }
+  
+  .btn:active {
+    background-color: #222;  /* Darker active state */
+    transform: translateY(0);
+  }
+  
+  .btn:disabled {
+    background-color: #555;  /* Disabled state */
+    cursor: not-allowed;
+  }
+  
+  .btn .icon {
+    margin-right: 8px;  /* Space between icon and text */
+  }
+  
+  /* Optional: Different types of buttons */
+  .btn.primary {
+    background-color: #000000;  /* Dark primary */
+    border-radius: 4px;
+  }
+  
+  .btn.secondary {
+    background-color: #444;  /* Slightly lighter for secondary */
+    border-radius: 4px;
+  }
+  

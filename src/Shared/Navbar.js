@@ -4,7 +4,10 @@ import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Pages/Login/AuthContext"; // Import the useAuth hook
 import { useSelector } from "react-redux";
-import shoppingCart from '../Assests/shoppingCart.png'
+import shoppingCart from '../Assests/online-shopping.png'
+import { showToast } from "../Utils/Helper/ToastNotifications";
+import peopleIcon from "../Assests/people.png";
+import stylethread from "../Assests/STW_Logo.png";
 
 function Navbar() {
   const { token, role, setToken } = useAuth(); // Get token and role from AuthContext
@@ -21,10 +24,24 @@ function Navbar() {
     // Optionally, you might want to update the state in AuthContext to reflect the logout
   };
 
+  const handleCartClick = (event) => {
+    if (!token) {
+      event.preventDefault(); // Stop navigation
+      showToast("error", "Please Login first.");
+    } else {
+      navigate("/cart"); // Navigate to cart if logged in
+    }
+  };
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="navbar-left">
+        <div className="ST-Logo">
+        <Link to="/home" className="nav-link">
+                <img src={stylethread} alt="peopleIcon"/>
+                </Link>
+            </div>
           <div className="logo-text">Style Thread</div>
           <ul className="navbar-nav ml-5">
             <li className="nav-item active">
@@ -57,16 +74,22 @@ function Navbar() {
           </div>
         </div>
         <div className="navbar-right">
-        {role === "Administrator" && (
           <div className="cart-icon">
-            <Link to="/cart">
+            <Link to="/cart" onClick={handleCartClick}>
               <img src={shoppingCart} alt="shoppingCart"/>
               {cartCount > 0 && (
                 <span className="cart-count">{cartCount}</span> // Display the cart count
               )}
             </Link>
           </div>
+          {role === "Visitor" && (
+              <div className="profile-icon">
+              <Link to="/profile">
+                <img src={peopleIcon} alt="peopleIcon"/>
+              </Link>
+              </div>
           )}
+         
           <div className="auth-buttons">
             {token ? (
               <button className="nav-link" onClick={handleLogout}>

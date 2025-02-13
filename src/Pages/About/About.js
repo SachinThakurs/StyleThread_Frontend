@@ -1,5 +1,5 @@
 import React from "react";
-import CEO from "../../Assests/logo-background.png";
+import CEO from "../../Assests/STB_T_Logo.png";
 import "./About.css"; // Import the CSS file for styling
 
 function About() {

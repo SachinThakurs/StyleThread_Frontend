@@ -131,7 +131,7 @@ h1 {
 }
 
 .size:hover {
-  background-color: #048700;
+  background-color: #282f28;
   color: white;
 }
 
@@ -153,12 +153,12 @@ h1 {
 }
 
 .add-to-cart {
-  background-color: #ff5722;
+  background-color: #211a18;
   color: white;
 }
 
 .add-to-cart:hover {
-  background-color: #e64a19;
+  background-color: #4e4340;
 }
 
 .buy-now {
@@ -191,7 +191,7 @@ h1 {
   margin-left: 20px;
 }
 .size.selected {
-  background-color: #046a00;
+  background-color: #282f28;
   color: white;
 }
 
