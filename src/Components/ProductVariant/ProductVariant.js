@@ -11,16 +11,24 @@ function ProductVariant({ variantData, updateVariant }) {
     Inventory: "",
     Discount: "",
     ColorId: "",
-    Sizes: [],
+    ProductVariantSizes: [],
     SizeIds: [],
     Image: [],
-    ...variantData,
+    ...variantData
   });
 
-  useEffect(
-    () => setLocalVariant((prev) => ({ ...prev, ...variantData })),
-    [variantData]
-  );
+  // useEffect(
+  //   () => setLocalVariant((prev) => ({ ...prev, ...variantData })),
+  //   [variantData]
+  // );
+
+  useEffect(() => {
+    setLocalVariant((prev) => ({
+      ...prev,
+      ...variantData,
+      productVariantSizes: variantData?.ProductVariantSizes || []
+    }));
+  }, [variantData]);
 
   const handleChange = ({ target: { name, value } }) => {
     const updatedVariant = { ...localVariant, [name]: value };
@@ -41,13 +49,13 @@ function ProductVariant({ variantData, updateVariant }) {
     ).then((updatedImages) => {
       const updatedVariant = {
         ...localVariant,
-        Image: [...localVariant.Image, ...updatedImages],
+        Image: [...localVariant.Image, ...updatedImages]
       };
       setLocalVariant(updatedVariant);
       updateVariant(updatedVariant);
     });
   };
-  
+
   const handleRemoveImage = (index, e) => {
     // Prevent form submission or other events from being triggered
     e.preventDefault();
@@ -58,12 +66,31 @@ function ProductVariant({ variantData, updateVariant }) {
     updateVariant({ ...localVariant, Image: updatedImages });
   };
 
+  // const handleSelectChange = (selectedSizes) => {
+  //   const updatedVariant = {
+  //     ...localVariant,
+  //     SizeIds: selectedSizes.map((size) => size.value),
+  //     Sizes: selectedSizes
+  //   };
+  //   setLocalVariant(updatedVariant);
+  //   updateVariant(updatedVariant);
+  // };
+
   const handleSelectChange = (selectedSizes) => {
+    const updatedVariantSizes = selectedSizes.map((size) => ({
+      productVariantId: localVariant.ProductVariantId || 0, // Ensure this is correctly populated
+      sizeId: size.value,
+      size: {
+        sizeId: size.value,
+        sizeName: size.label
+      }
+    }));
+
     const updatedVariant = {
       ...localVariant,
-      SizeIds: selectedSizes.map((size) => size.value),
-      Sizes: selectedSizes,
+      ProductVariantSizes: updatedVariantSizes
     };
+
     setLocalVariant(updatedVariant);
     updateVariant(updatedVariant);
   };
@@ -115,18 +142,18 @@ function ProductVariant({ variantData, updateVariant }) {
       )}
       <div className="inputContainer">
         <label className="inputLabel">Size:</label>
-        <Select
+        {/* <Select
           className="customDrodown"
           isMulti
           value={dropdowns.sizes
             ?.filter((size) => localVariant.SizeIds.includes(size.sizeId))
             .map((size) => ({
               value: size.sizeId,
-              label: size.sizeName,
+              label: size.sizeName
             }))}
           options={dropdowns.sizes?.map((size) => ({
             value: size.sizeId,
-            label: size.sizeName,
+            label: size.sizeName
           }))}
           onChange={handleSelectChange}
           styles={{
@@ -134,10 +161,38 @@ function ProductVariant({ variantData, updateVariant }) {
             menu: (provided) => ({
               ...provided,
               maxHeight: "150px",
-              overflowY: "auto",
-            }),
+              overflowY: "auto"
+            })
+          }}
+        /> */}
+        <Select
+          className="customDrodown"
+          isMulti
+          value={dropdowns.sizes
+            ?.filter((size) =>
+              localVariant.productVariantSizes?.some(
+                (s) => s.sizeId === size.sizeId
+              )
+            )
+            .map((size) => ({
+              value: size.sizeId,
+              label: size.sizeName
+            }))}
+          options={dropdowns.sizes?.map((size) => ({
+            value: size.sizeId,
+            label: size.sizeName
+          }))}
+          onChange={handleSelectChange}
+          styles={{
+            control: (provided) => ({ ...provided, minHeight: "40px" }),
+            menu: (provided) => ({
+              ...provided,
+              maxHeight: "150px",
+              overflowY: "auto"
+            })
           }}
         />
+
         <div className="inputUnderline"></div>
       </div>
       <div className="inputContainer">
@@ -166,7 +221,7 @@ function ProductVariant({ variantData, updateVariant }) {
                 style={{
                   position: "relative",
                   display: "inline-block",
-                  margin: "10px",
+                  margin: "10px"
                 }}
               >
                 <img
@@ -174,7 +229,11 @@ function ProductVariant({ variantData, updateVariant }) {
                   alt={`Preview ${index + 1}`}
                   style={{ maxWidth: "100%", maxHeight: "200px" }}
                 />
-                  <Button className="close-button" label="&times;" onClick={(e) => handleRemoveImage(index, e)}/>
+                <Button
+                  className="close-button"
+                  label="&times;"
+                  onClick={(e) => handleRemoveImage(index, e)}
+                />
               </div>
             );
           })}
