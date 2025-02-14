@@ -1,7 +1,7 @@
-import React from 'react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
-import ProductVariant from '../ProductVariant/ProductVariant';
-import './ProductVariantsList.css'; // Import appropriate CSS file for styling
+import React from "react";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import ProductVariant from "../ProductVariant/ProductVariant";
+import "./ProductVariantsList.css"; // Import appropriate CSS file for styling
 
 export const ProductVariantsList = ({
   productVariants,
@@ -13,6 +13,16 @@ export const ProductVariantsList = ({
 }) => {
   const maxVariants = 5; // Maximum allowed variants
 
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    deleteVariant(selectedVariantIndex);
+
+    // Ensure selected index remains valid
+    setSelectedVariantIndex((prevIndex) =>
+      prevIndex > 0 ? prevIndex - 1 : 0
+    );
+  };
+
   return (
     <div className="variants-container">
       {/* Variant Count Display */}
@@ -22,20 +32,23 @@ export const ProductVariantsList = ({
 
       {/* Variant Selection */}
       <div className="variant-selection">
-        {productVariants.map((_, index) => (
+        {productVariants.map((variant, index) => (
           <div
-            className={`variant-header ${selectedVariantIndex === index ? 'selected' : ''}`}
+            key={variant.id || index} // Use a unique identifier if available
+            className={`variant-header ${selectedVariantIndex === index ? "selected" : ""}`}
             onClick={() => setSelectedVariantIndex(index)}
-            key={index}
           >
             <h5>{index + 1}</h5>
           </div>
         ))}
 
-        {/* Add Variant Button (Hidden if 5 variants are already added) */}
+        {/* Add Variant Button (Hidden if max variants reached) */}
         {productVariants.length < maxVariants && (
           <div className="variant-header">
-            <FaPlus className="icon" onClick={addVariant} />
+            <FaPlus
+              className="icon"
+              onClick={() => productVariants.length < maxVariants && addVariant()}
+            />
           </div>
         )}
       </div>
@@ -48,24 +61,22 @@ export const ProductVariantsList = ({
           {/* Delete Variant Button (Only if more than 1 variant exists) */}
           {productVariants.length > 1 && (
             <div className="deleteButton">
-              <FaTrash
-                className="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteVariant(selectedVariantIndex);
-                }}
-              />
+              <FaTrash className="icon" onClick={handleDelete} />
             </div>
           )}
         </div>
 
         {/* Product Variant Details */}
-        <div className="row product-variants-container">
-          <ProductVariant
-            variantData={productVariants[selectedVariantIndex]}
-            updateVariant={(updatedVariant) => updateVariant(selectedVariantIndex, updatedVariant)}
-          />
-        </div>
+        {productVariants.length > 0 && (
+          <div className="row product-variants-container">
+            <ProductVariant
+              variantData={productVariants[selectedVariantIndex]}
+              updateVariant={(updatedVariant) =>
+                updateVariant(selectedVariantIndex, updatedVariant)
+              }
+            />
+          </div>
+        )}
       </div>
     </div>
   );
