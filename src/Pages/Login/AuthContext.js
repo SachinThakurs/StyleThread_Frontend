@@ -8,7 +8,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem("auth"));
   const [role, setRole] = useState(null); // Store the user role
   const navigate = useNavigate();
 
