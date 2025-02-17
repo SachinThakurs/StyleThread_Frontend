@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { addProducts } from "../../Store/GenericStore";
 import { FormGroup } from "../../Components/Atoms/FormGroup";
@@ -10,14 +10,12 @@ import { Checkbox } from "../../Components/Atoms/Checkbox";
 import { Input } from "../../Components/Atoms/Input"; // Correct import statement
 import { Button } from "../../Components/Atoms/Button";
 import { showToast } from "../../Utils/Helper/ToastNotifications";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 function AddProduct() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate(); // For redirection
-
   const { product: initialProduct } = location.state || {};
 
   const [product, setProduct] = useState({
@@ -38,18 +36,16 @@ function AddProduct() {
       ? initialProduct.productVariants.map((variant) => ({
           ProductVariantId: variant.productVariantId || 0,
           ProductId: variant.productId || 0,
-          SizeIds:
-            variant.productVariantSizes?.map((size) => size.sizeId) || [],
+          SizeIds: variant.productVariantSizes?.map((size) => size.sizeId) || [],
           ColorId: variant.colorId || 0,
           Price: variant.price || "",
           SalePrice: variant.salePrice || "",
           Discount: variant.discount || "",
           Inventory: variant.inventory || "",
           Image: variant.image || [""],
-          Sizes: variant.productVariantSizes || [],
+          ProductVariantSizes: variant.productVariantSizes || []
         }))
-      : [
-          {
+      : [{
             ProductVariantId: 0,
             ProductId: 0,
             SizeIds: [],
@@ -59,9 +55,8 @@ function AddProduct() {
             Discount: "",
             Inventory: "",
             Image: [""],
-            Sizes: [],
-          },
-        ],
+            ProductVariantSizes: []
+        }]
   });
 
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
@@ -79,7 +74,7 @@ function AddProduct() {
   const handleChange = ({ target: { name, value, type, checked } }) => {
     setProduct((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -98,9 +93,9 @@ function AddProduct() {
           Discount: "",
           Inventory: "",
           Image: [""],
-          Sizes: [],
-        },
-      ],
+          ProductVariantSizes: []
+        }
+      ]
     }));
     setSelectedVariantIndex(product.ProductVariants.length);
   };
@@ -109,7 +104,7 @@ function AddProduct() {
     if (product.ProductVariants.length > 1) {
       setProduct((prev) => ({
         ...prev,
-        ProductVariants: prev.ProductVariants.filter((_, i) => i !== index),
+        ProductVariants: prev.ProductVariants.filter((_, i) => i !== index)
       }));
       setSelectedVariantIndex(index - 1);
     }
@@ -125,23 +120,17 @@ function AddProduct() {
     setLoading(true); // Show loader when submitting
     e.preventDefault();
 
-    const transformedProductVariants = product.ProductVariants.map(
-      (variant) => ({
-        productVariantId: variant.ProductVariantId,
-        productId: variant.ProductId,
-        colorId: parseInt(variant.ColorId, 10),
-        price: parseFloat(variant.Price),
-        salePrice: parseFloat(variant.SalePrice),
-        discount: variant.Discount ? parseFloat(variant.Discount) : 0,
-        inventory: parseInt(variant.Inventory, 10),
-        image: variant.Image.filter((img) => img),
-        productVariantSizes: variant.SizeIds.map((sizeId) => ({
-          productVariantId: variant.ProductVariantId,
-          sizeId,
-          sizeName : product.ProductVariants[0].Sizes.find(size => size.value === sizeId)?.label
-        })),
-      })
-    );
+    const transformedProductVariants = product.ProductVariants.map((variant) => ({
+      productVariantId: variant.ProductVariantId,
+      productId: variant.ProductId,
+      colorId: parseInt(variant.ColorId, 10),
+      price: parseFloat(variant.Price),
+      salePrice: parseFloat(variant.SalePrice),
+      discount: variant.Discount ? parseFloat(variant.Discount) : 0,
+      inventory: parseInt(variant.Inventory, 10),
+      image: variant.Image.filter((img) => img),
+      productVariantSizes: variant.ProductVariantSizes
+    }));
 
     const finalProductData = {
       productId: product.ProductId,
@@ -158,10 +147,9 @@ function AddProduct() {
       reversible: product.Reversible,
       neckTypeId: parseInt(product.NeckTypeId, 10),
       fabricCareId: parseInt(product.FabricCareId, 10),
-      productVariants: transformedProductVariants,
+      productVariants: transformedProductVariants
     };
     console.log(finalProductData);
-    
 
     try {
       const url = initialProduct
@@ -175,26 +163,27 @@ function AddProduct() {
         url,
         data: finalProductData,
         headers: {
-          "Content-Type": "application/json",
-        },
+          "Content-Type": "application/json"
+        }
       });
 
       if (response.data.error) {
         showToast("error", response.data.error);
       } else {
-        initialProduct ? showToast("success", "Product updated successfully!") : 
-        showToast("success", "Product saved successfully!");
+        initialProduct
+          ? showToast("success", "Product updated successfully!")
+          : showToast("success", "Product saved successfully!");
         // setTimeout(10000)
         // navigate("/productList");
       }
     } catch (error) {
       console.error("Error during API submission: ", error);
-  
+
       const errorMessage =
         axios.isAxiosError(error) && error.response
           ? error.response.data?.message || "Server error occurred."
           : error.message || "An error occurred.";
-  
+
       showToast("error", errorMessage);
     } finally {
       setLoading(false); // Hide loader after submission
@@ -209,108 +198,17 @@ function AddProduct() {
         <form onSubmit={handleSubmit} className="product-forms">
           <div className="row">
             <div className="col-6">
-              <Input
-                label="SKU"
-                placeholder="Enter SKU"
-                name="SKU"
-                value={product.SKU}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                label="Name"
-                placeholder="Enter Name"
-                name="Name"
-                value={product.Name}
-                onChange={handleChange}
-                required
-              />
-              <FormGroup
-                label="Description"
-                placeholder="Enter Description"
-                name="Description"
-                value={product.Description}
-                onChange={handleChange}
-                type="textarea"
-                required
-              />
-              <FormGroup
-                label="Category"
-                placeholder="Select Category"
-                name="CategoryId"
-                value={product.CategoryId}
-                onChange={handleChange}
-                options={dropdowns.categories || []}
-                optionId="categoryId"
-                optionName="name"
-                type="select"
-              />
-              <FormGroup
-                label="Brand"
-                name="BrandId"
-                value={product.BrandId}
-                onChange={handleChange}
-                options={dropdowns.brands || []}
-                optionId="brandId"
-                optionName="name"
-                type="select"
-              />
-              <FormGroup
-                label="Fit"
-                name="FitId"
-                value={product.FitId}
-                onChange={handleChange}
-                options={dropdowns.fits || []}
-                optionId="fitId"
-                optionName="fitName"
-                type="select"
-              />
-              <FormGroup
-                label="Fabric"
-                name="FabricId"
-                value={product.FabricId}
-                onChange={handleChange}
-                options={dropdowns.fabrics || []}
-                optionId="fabricId"
-                optionName="fabricName"
-                type="select"
-              />
-              <FormGroup
-                label="Sleeve"
-                name="SleeveId"
-                value={product.SleeveId}
-                onChange={handleChange}
-                options={dropdowns.sleeves || []}
-                optionId="sleeveId"
-                optionName="sleeveType"
-                type="select"
-              />
-              <FormGroup
-                label="Neck Type"
-                name="NeckTypeId"
-                value={product.NeckTypeId}
-                onChange={handleChange}
-                options={dropdowns.neckTypes || []}
-                optionId="neckTypeId"
-                optionName="neckTypeName"
-                type="select"
-              />
-              <FormGroup
-                label="Fabric Care"
-                name="FabricCareId"
-                value={product.FabricCareId}
-                onChange={handleChange}
-                options={dropdowns.fabricCares || []}
-                optionId="fabricCareId"
-                optionName="careInstructions"
-                type="select"
-              />
-              <Checkbox
-                label="Reversible"
-                name="Reversible"
-                checked={product.Reversible}
-                onChange={handleChange}
-              />
+              <Input label="SKU" placeholder="Enter SKU" name="SKU" value={product.SKU} onChange={handleChange} required/>
+              <Input label="Name" placeholder="Enter Name" name="Name" value={product.Name} onChange={handleChange} required/>
+              <FormGroup label="Description" placeholder="Enter Description"  name="Description" value={product.Description} onChange={handleChange} type="textarea" required />
+              <FormGroup label="Category" placeholder="Select Category" name="CategoryId" value={product.CategoryId} onChange={handleChange}  options={dropdowns.categories || []} optionId="categoryId" optionName="name" type="select" />
+              <FormGroup label="Brand" name="BrandId" value={product.BrandId} onChange={handleChange} options={dropdowns.brands || []} optionId="brandId" optionName="name" type="select" />
+              <FormGroup label="Fit" name="FitId" value={product.FitId} onChange={handleChange} options={dropdowns.fits || []} optionId="fitId" optionName="fitName" type="select" /> 
+              <FormGroup label="Fabric" name="FabricId" value={product.FabricId} onChange={handleChange} options={dropdowns.fabrics || []} optionId="fabricId" optionName="fabricName" type="select" />
+              <FormGroup label="Sleeve" name="SleeveId" value={product.SleeveId} onChange={handleChange} options={dropdowns.sleeves || []} optionId="sleeveId" optionName="sleeveType" type="select" />
+              <FormGroup label="Neck Type" name="NeckTypeId" value={product.NeckTypeId} onChange={handleChange} options={dropdowns.neckTypes || []} optionId="neckTypeId" optionName="neckTypeName" type="select"/>
+              <FormGroup label="Fabric Care" name="FabricCareId" value={product.FabricCareId} onChange={handleChange} options={dropdowns.fabricCares || []} optionId="fabricCareId" optionName="careInstructions"type="select" />
+              <Checkbox label="Reversible" name="Reversible" checked={product.Reversible} onChange={handleChange} />
             </div>
             <div className="col-6">
               <ProductVariantsList
